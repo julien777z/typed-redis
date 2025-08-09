@@ -1,0 +1,43 @@
+[project]
+name = "typed-redis"
+version = "0.0.3"
+description = "Pydantic Models for Redis"
+authors = [
+    {name = "Julien Kmec",email = "me@julien.dev"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+homepage = "https://github.com/krystal-compute/typed-redis"
+dependencies = [
+    "redis (>=6.4.0,<7.0.0)",
+    "pydantic (>=2.11.7,<3.0.0)",
+    "fakeredis (>=2.30.3,<3.0.0)"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-asyncio>=0.23",
+  "black>=24.0",
+  "coverage>=7.6",
+  "pytest-cov (>=6.1.1,<7.0.0)"
+]
+
+[tool.poetry]
+packages = [
+    {include = "typed_redis"}
+]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
