@@ -1,6 +1,6 @@
 [project]
 name = "typed-redis"
-version = "0.0.3"
+version = "0.0.4"
 description = "Pydantic Models for Redis"
 authors = [
     {name = "Julien Kmec",email = "me@julien.dev"}
