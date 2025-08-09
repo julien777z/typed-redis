@@ -1,0 +1,49 @@
+name: Run Tests via Pytest
+
+on:
+  pull_request_target:
+    branches:
+      - "**"
+  push:
+    branches:
+      - "**"
+
+jobs:
+  build:
+    name: Build and Run Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout code (PR)
+        if: github.event_name == 'pull_request_target'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Checkout code (Push)
+        if: github.event_name == 'push'
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install poetry
+        run: pipx install poetry==2.1.2
+
+      - name: Install dependencies
+        run: |
+          poetry install --sync -E test
+
+      - name: Test with pytest
+        run: |
+          poetry run pytest --cov=pydantic_encryption --cov-branch --cov-report=xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
