@@ -1,9 +1,7 @@
-<<<<<<< Updated upstream
-# typed-redis
-=======
 # Pydantic Models for Redis
 
-This repository allows you to create Pydantic models representing Redis objects.
+This repository allows you to create Pydantic models representing Redis objects, allowing
+your models to follow a schema with validation and serialization.
 
 The Redis models are async and have ORM-like operations.
 
@@ -113,4 +111,3 @@ print(user.name)
 await new_user.update(name="Bob Smith")
 print(user.name)
 ```
->>>>>>> Stashed changes
