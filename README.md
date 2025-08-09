@@ -112,7 +112,7 @@ print(user.name)
 
 ### Supported Operations
 
-| Operation | Method | Syntax | Underlying Redis | Notes |
+| Operation | Method | Example | Underlying Redis | Notes |
 | --- | --- | --- | --- | --- |
 | Create | `await instance.create(**kwargs)` | `await user.create(ex=60)` | `SET key value [EX seconds] [PX milliseconds] [NX]` | Serializes with `model_dump_json()` and stores at `redis_key`. Optional `ex`, `px`, `nx` are forwarded. |
 | Upsert (call) | `await instance()` | `await user()` | `SET key value` | Same as `create()` with default options. |
