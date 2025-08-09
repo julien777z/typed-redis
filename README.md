@@ -109,3 +109,17 @@ print(user.name)
 await new_user.update(name="Bob Smith")
 print(user.name)
 ```
+
+### Supported Operations
+
+| Operation | Method | Example | Underlying Redis | Notes |
+| --- | --- | --- | --- | --- |
+| Create | `await instance.create(**kwargs)` | `await user.create(ex=60)` | `SET key value [EX seconds] [PX milliseconds] [NX]` | Serializes with `model_dump_json()` and stores at `redis_key`. Optional `ex`, `px`, `nx` are forwarded. |
+| Upsert (call) | `await instance()` | `await user()` | `SET key value` | Same as `create()` with default options. |
+| Update | `await instance.update(**changes)` | `await user.update(name="Charlie Brown")` | `SET key value` | Validates via Pydantic `model_copy(update=...)`, then persists. Returns the updated model. |
+| Get | `await Model.get(key)` | `user = await User.get("user:1")` | `GET key` | Parses JSON using `model_validate_json(...)` into your model. |
+| Delete | `await instance.delete()` | `await user.delete()` | `DEL key` | Removes the key at `redis_key`. |
+
+Notes
+- Your model must implement a `redis_key` property returning the key string.
+- Bind a Redis client via `Store(redis_client)` and inherit from it; otherwise, operations raise a `RuntimeError`.
