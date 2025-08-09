@@ -5,6 +5,19 @@ your models to follow a schema with validation and serialization.
 
 The Redis models are async and have ORM-like operations.
 
+## Installation
+
+Install with [Pip](https://pip.pypa.io/en/stable/):
+```bash
+pip install "typed_redis"
+```
+
+## Features
+
+- Add a schema to Redis models with validation and serialization
+- Async support
+- ORM-like syntax
+
 ## Example
 
 ```python
