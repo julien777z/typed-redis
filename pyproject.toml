@@ -1,6 +1,6 @@
 [project]
 name = "typed-redis"
-version = "0.0.1"
+version = "0.0.2"
 description = ""
 authors = [
     {name = "Julien Kmec",email = "me@julien.dev"}
