@@ -55,6 +55,8 @@ class RedisModel(BaseModel, ABC):
     async def _store_to_redis(self, **kwargs: RedisKwargs) -> None:
         """Store the model to Redis."""
 
+        self._assert_not_deleted()
+
         data = self.model_dump_json()
 
         await self._client().set(self.redis_key, data, **kwargs)
@@ -75,6 +77,8 @@ class RedisModel(BaseModel, ABC):
     async def delete(self) -> None:
         """Delete the model from Redis."""
 
+        self._assert_not_deleted()
+
         await self._client().delete(self.redis_key)
 
         self._deleted = True
@@ -89,5 +93,7 @@ class RedisModel(BaseModel, ABC):
 
     async def __call__(self) -> None:
         """Initialize the model."""
+
+        self._assert_not_deleted()
 
         await self.create()
