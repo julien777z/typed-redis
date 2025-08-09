@@ -39,15 +39,15 @@ class RedisModel(BaseModel, ABC):
     def redis_key(self) -> str:
         """Return this instance's Redis key."""
 
-    @classmethod
-    def _client(cls) -> Redis:
+    @property
+    def _client(self) -> Redis:
         """Return the bound Redis client."""
 
-        client = cls.__redis__
+        client = self._redis
 
         if client is None:
             raise RuntimeError(
-                f"No Redis client bound for {cls.__name__}. Use Store(redis_client) and inherit from the returned base."
+                f"No Redis client bound for {self.__class__.__name__}. Use Store(redis_client) and inherit from the returned base."
             )
 
         return client
@@ -59,7 +59,7 @@ class RedisModel(BaseModel, ABC):
 
         data = self.model_dump_json()
 
-        await self._client().set(self.redis_key, data, **kwargs)
+        await self._client.set(self.redis_key, data, **kwargs)
 
     async def create(self, **kwargs: RedisKwargs) -> None:
         """Create the model in Redis. This is idempotent."""
@@ -79,7 +79,7 @@ class RedisModel(BaseModel, ABC):
 
         self._assert_not_deleted()
 
-        await self._client().delete(self.redis_key)
+        await self._client.delete(self.redis_key)
 
         self._deleted = True
 
@@ -87,7 +87,7 @@ class RedisModel(BaseModel, ABC):
     async def get(cls, key: str) -> Self:
         """Get the model from Redis."""
 
-        data = await cls._client().get(key)
+        data = await cls._client.get(key)
 
         return cls.model_validate_json(data)
 

@@ -19,7 +19,7 @@ class Store:
         class StoreBase(RedisModel):
             """Base model class bound to the provided Redis client."""
 
-            __redis__ = self.redis_client
+            _redis = self.redis_client
 
         StoreBase.__name__ = "StoreBase"
 

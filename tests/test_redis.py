@@ -21,7 +21,7 @@ async def _create_user(user_class: type[UserFixture], idx: int, name: str) -> Us
 async def _assert_valid_user(user: UserFixture, redis_mock: FakeAsyncRedis):
     """Assert the user is valid."""
 
-    assert user._client() == redis_mock
+    assert user._client == redis_mock
     assert user.redis_key == f"user:{user.id}"
 
     assert await redis_mock.get(user.redis_key) == user.model_dump_json()
