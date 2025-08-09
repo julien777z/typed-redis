@@ -38,12 +38,12 @@ class User(Store(redis)):
         return f"user:{self.id}"
 
 
- user = User(id=1, name="Charlie")
+user = User(id=1, name="Charlie")
 
- await user.create() # Store user object in Redis
+await user.create() # Store user object in Redis
 
 # Later:
-user = await user.get("user:1")
+user = await User.get("user:1")
 print(user.name) # "Charlie"
 ```
 
