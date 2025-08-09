@@ -64,6 +64,11 @@ class RedisModel(BaseModel, ABC):
 
         return updated
 
+    async def delete(self) -> None:
+        """Delete the model from Redis."""
+
+        await self._client().delete(self.redis_key)
+
     @classmethod
     async def get(cls, key: str) -> Self:
         """Get the model from Redis."""
