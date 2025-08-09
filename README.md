@@ -96,7 +96,7 @@ Now you can use your model:
 from .user import User
 
 # Get existing user
-user = await user.get("user:1")
+user = await User.get("user:1")
 print(user.name)
 
 # Create new user (idempotent)
