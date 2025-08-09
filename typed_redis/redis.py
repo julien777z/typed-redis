@@ -29,7 +29,7 @@ class RedisModel(BaseModel, ABC):
         """Return this instance's Redis key."""
 
     @classmethod
-    def client(cls) -> Redis:
+    def _client(cls) -> Redis:
         """Return the bound Redis client."""
 
         client = cls.__redis__
@@ -46,7 +46,7 @@ class RedisModel(BaseModel, ABC):
 
         data = self.model_dump_json()
 
-        await self.client().set(self.redis_key, data, **kwargs)
+        await self._client().set(self.redis_key, data, **kwargs)
 
     async def create(self, **kwargs: RedisKwargs) -> Self:
         """Create this model only if it doesn't exist (NX)."""
@@ -64,11 +64,16 @@ class RedisModel(BaseModel, ABC):
 
         return updated
 
+    async def delete(self) -> None:
+        """Delete the model from Redis."""
+
+        await self._client().delete(self.redis_key)
+
     @classmethod
     async def get(cls, key: str) -> Self:
         """Get the model from Redis."""
 
-        data = await cls.client().get(key)
+        data = await cls._client().get(key)
 
         return cls.model_validate_json(data)
 
