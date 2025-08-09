@@ -43,6 +43,8 @@ class RedisModel(BaseModel, ABC):
     def _client(self) -> Redis:
         """Return the bound Redis client."""
 
+        self._assert_not_deleted()
+
         client = self._redis
 
         if client is None:
@@ -54,8 +56,6 @@ class RedisModel(BaseModel, ABC):
 
     async def _store_to_redis(self, **kwargs: RedisKwargs) -> None:
         """Store the model to Redis."""
-
-        self._assert_not_deleted()
 
         data = self.model_dump_json()
 
@@ -77,8 +77,6 @@ class RedisModel(BaseModel, ABC):
     async def delete(self) -> None:
         """Delete the model from Redis."""
 
-        self._assert_not_deleted()
-
         await self._client.delete(self.redis_key)
 
         self._deleted = True
@@ -93,7 +91,5 @@ class RedisModel(BaseModel, ABC):
 
     async def __call__(self) -> None:
         """Initialize the model."""
-
-        self._assert_not_deleted()
 
         await self.create()
