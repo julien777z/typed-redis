@@ -34,6 +34,15 @@ class RedisModel(BaseModel, ABC):
                 f"Model {self.__class__.__name__} has been deleted. No further operations are allowed."
             )
 
+    @classmethod
+    def _assert_redis_client(cls) -> None:
+        """Assert that the model has a Redis client bound."""
+
+        if cls._redis is None:
+            raise RuntimeError(
+                f"No Redis client bound for {cls.__name__}. Use Store(redis_client) and inherit from the returned base."
+            )
+
     @property
     @abstractmethod
     def redis_key(self) -> str:
@@ -45,12 +54,9 @@ class RedisModel(BaseModel, ABC):
 
         self._assert_not_deleted()
 
-        client = self._redis
+        self._assert_redis_client()
 
-        if client is None:
-            raise RuntimeError(
-                f"No Redis client bound for {self.__class__.__name__}. Use Store(redis_client) and inherit from the returned base."
-            )
+        client = self._redis
 
         return client
 
@@ -67,7 +73,7 @@ class RedisModel(BaseModel, ABC):
         await self._store_to_redis(**kwargs)
 
     async def update(self, **changes: dict) -> None:
-        """Validate and persist updates."""
+        """Validate and persist updates into Redis."""
 
         for key, value in changes.items():
             setattr(self, key, value)
@@ -75,7 +81,7 @@ class RedisModel(BaseModel, ABC):
         await self._store_to_redis()
 
     async def delete(self) -> None:
-        """Delete the model from Redis."""
+        """Delete the model from Redis. No further operations are allowed after this is called."""
 
         await self._client.delete(self.redis_key)
 
@@ -83,9 +89,16 @@ class RedisModel(BaseModel, ABC):
 
     @classmethod
     async def get(cls, key: str) -> Self:
-        """Get the model from Redis."""
+        """Get the model from Redis and parse it into the Pydantic model."""
 
-        data = await cls._client.get(key)
+        cls._assert_redis_client()
+
+        client = cls._redis
+
+        data = await client.get(key)
+
+        if isinstance(data, bytes):
+            data = data.decode("utf-8")
 
         return cls.model_validate_json(data)
 

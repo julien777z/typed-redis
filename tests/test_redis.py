@@ -55,3 +55,17 @@ async def test_redis_model_invalid_data(user_class: type[UserFixture]):
 
     with pytest.raises(ValidationError):
         user_class(id=1, name=True)
+
+
+@pytest.mark.asyncio
+async def test_redis_model_deleted(user_class: type[UserFixture]):
+    """Test that a deleted Redis model raises an error when an operation is attempted."""
+
+    await _create_user(user_class, idx=1, name="John Doe")
+
+    user = await user_class.get("user:1")
+
+    await user.delete()
+
+    with pytest.raises(RuntimeError):
+        await user.update(name="Jane Doe")
