@@ -7,9 +7,9 @@ The Redis models are async and have ORM-like operations.
 
 ## Installation
 
-Install with [Pip](https://pip.pypa.io/en/stable/):
+Install with [pip](https://pip.pypa.io/en/stable/)
 ```bash
-pip install "typed_redis"
+pip install typed_redis
 ```
 
 ## Features
@@ -59,16 +59,17 @@ Create a Store:
 ```python
 
 from redis.asyncio import Redis
-from typed_redis import Store as RedisStore
+from typed_redis import Store as _Store
 
 redis = Redis(...)
 
-Store = RedisStore(redis)
+Store = _Store(redis)
 ```
 
 ### Create Model
 
-Using your `Store` object created earlier, pass it into your Pydantic classes:
+Using your `Store` object created earlier, pass it into your Pydantic classes by inheritting from it.
+Add a `redis_key` property to return the string that should be used as the Redis key.
 
 `user.py`
 ```python
@@ -85,8 +86,6 @@ class User(Store):
     def redis_key(self) -> str:
         return f"user:{self.id}"
 ```
-
-Change `redis_key` to return the string that should be used as the Redis key.
 
 ### Use Your Model
 
