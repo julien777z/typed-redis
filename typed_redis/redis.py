@@ -53,7 +53,6 @@ class RedisModel(BaseModel, ABC):
         """Return the bound Redis client."""
 
         self._assert_not_deleted()
-
         self._assert_redis_client()
 
         client = self._redis
