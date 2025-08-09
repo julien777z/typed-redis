@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Self, TypedDict
+from typing import ClassVar, Self, TypedDict
 
 from pydantic import BaseModel
 from redis.asyncio import Redis
@@ -21,7 +21,18 @@ class RedisModel(BaseModel, ABC):
     """Base class for Redis-backed Pydantic models."""
 
     # Class-level Redis client. Set by the `Store` factory on the base class.
-    __redis__: ClassVar[Any | None] = None
+    _redis: ClassVar[Redis | None] = None
+
+    # Whether the model has been deleted. No further operations are allowed.
+    _deleted: bool = False
+
+    def _assert_not_deleted(self) -> None:
+        """Assert that the model has not been deleted."""
+
+        if self._deleted:
+            raise RuntimeError(
+                f"Model {self.__class__.__name__} has been deleted. No further operations are allowed."
+            )
 
     @property
     @abstractmethod
@@ -48,26 +59,25 @@ class RedisModel(BaseModel, ABC):
 
         await self._client().set(self.redis_key, data, **kwargs)
 
-    async def create(self, **kwargs: RedisKwargs) -> Self:
-        """Create this model only if it doesn't exist (NX)."""
+    async def create(self, **kwargs: RedisKwargs) -> None:
+        """Create the model in Redis. This is idempotent."""
 
         await self._store_to_redis(**kwargs)
 
-        return self
+    async def update(self, **changes: dict) -> None:
+        """Validate and persist updates."""
 
-    async def update(self, **changes: Any) -> Self:
-        """Validate and persist updates using Pydantic copy(update=...)."""
-
-        updated: Self = self.model_copy(update=changes)
+        for key, value in changes.items():
+            setattr(self, key, value)
 
         await self._store_to_redis()
-
-        return updated
 
     async def delete(self) -> None:
         """Delete the model from Redis."""
 
         await self._client().delete(self.redis_key)
+
+        self._deleted = True
 
     @classmethod
     async def get(cls, key: str) -> Self:
