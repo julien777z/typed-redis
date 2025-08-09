@@ -23,7 +23,7 @@ class RedisModel(BaseModel, ABC):
     # Class-level Redis client. Set by the `Store` factory on the base class.
     _redis: ClassVar[Redis | None] = None
 
-    # Whether the model has been deleted. No further operations are allowed.
+    # Whether the model has been deleted. No further operations are allowed if this is True.
     _deleted: bool = False
 
     def _assert_not_deleted(self) -> None:
