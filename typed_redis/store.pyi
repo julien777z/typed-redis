@@ -6,6 +6,4 @@ from .redis import RedisModel
 
 __all__ = ["Store"]
 
-
-def Store(redis_client: Redis) -> type[RedisModel]:
-    ...
+def Store(redis_client: Redis) -> type[RedisModel]: ...
