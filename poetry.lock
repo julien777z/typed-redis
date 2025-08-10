@@ -487,14 +487,14 @@ typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
 name = "pydantic-super-model"
-version = "0.0.3"
+version = "1.0.0"
 description = "Pydantic BaseModel supercharged with helper methods for generic and annotation support"
 optional = false
 python-versions = "<3.14,>=3.10"
 groups = ["main"]
 files = [
-    {file = "pydantic_super_model-0.0.3-py3-none-any.whl", hash = "sha256:1cd9b84caa10b546cda208746dd0d28659a67e81dfc8365c54226a0d16e4d6d5"},
-    {file = "pydantic_super_model-0.0.3.tar.gz", hash = "sha256:ed96b1215353a18c5e07dc9aa5b1ef4e763e70183b983bc0f38157d6a74992da"},
+    {file = "pydantic_super_model-1.0.0-py3-none-any.whl", hash = "sha256:4de68974eebf5adde3dfcbea9bf37432b81be0ade59f9df039cfcdc27b0d3e3a"},
+    {file = "pydantic_super_model-1.0.0.tar.gz", hash = "sha256:c29a1e4d1ce0712f90732ba0f3072906f66c38c6f141c45e8829342e524e458d"},
 ]
 
 [package.dependencies]
@@ -716,4 +716,4 @@ dev = ["black", "coverage", "pytest", "pytest-asyncio", "pytest-cov"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.13"
-content-hash = "371cae12e7a9ac67cf269ffcf0fb60789120776bb4a04d842a65cf7d9d824318"
+content-hash = "cbbdf32af89061fb241281f412cfed0cbdab2a94c4dae35e2a017702b005851f"

@@ -1,5 +1,7 @@
 # Pydantic Models for Redis
 
+[![Coverage](https://img.shields.io/codecov/c/github/julien777z/pydantic-super-model?branch=main&label=Coverage)](https://codecov.io/gh/julien777z/pydantic-super-model)
+
 This repository allows you to create Pydantic models representing Redis objects, allowing
 your models to follow a schema with validation and serialization.
 
