@@ -65,8 +65,10 @@ Store = _Store(redis)
 
 ### Create Model
 
-Using your `Store` object created earlier, inherit from it and set a `model_name` class argument to prefix your Redis keys.
-Annotate one field as the primary key using `PrimaryRedisKey`. The Redis key is derived using the model name and field value.
+Using your `Store` object created earlier, inherit from it and set a `model_name` class argument to prefix your Redis keys for this model.
+Annotate one field as the primary key using `PrimaryRedisKey`. This field value will be used as the value for the Redis key. 
+
+> Note: The Redis key is derived using the model name and field value.
 
 `user.py`
 ```python
@@ -90,17 +92,13 @@ from .user import User
 
 # Get existing user by primary key value
 user = await User.get(1)
-print(user.name)
 
 # Create new user (idempotent)
 new_user = User(id=2, name="Bob")
 await new_user() # Same as calling await user.create(...)
 
-print(user.name)
-
 # Update user:
 await new_user.update(name="Bob Smith")
-print(user.name)
 ```
 
 ### Supported Operations
