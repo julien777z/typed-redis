@@ -73,6 +73,7 @@ Annotate one field as the primary key using `RedisPrimaryKey`. This field value 
 `user.py`
 ```python
 
+from typed_redis import RedisPrimaryKey
 from .store import Store
 
 class User(Store, model_name="user"):
