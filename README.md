@@ -2,10 +2,9 @@
 
 [![Coverage](https://img.shields.io/codecov/c/github/julien777z/pydantic-super-model?branch=main&label=Coverage)](https://codecov.io/gh/julien777z/pydantic-super-model)
 
-This repository allows you to create Pydantic models representing Redis objects, allowing
-your models to follow a schema with validation and serialization.
+Typed Redis provides strongly typed, Pydantic-based models for Redis with built-in validation and serialization.
 
-The Redis models are async and have ORM-like operations.
+It offers an async, ORM-like API for creating, retrieving, updating, and deleting data stored in Redis.
 
 ## Installation
 
