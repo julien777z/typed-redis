@@ -716,4 +716,4 @@ dev = ["black", "coverage", "pytest", "pytest-asyncio", "pytest-cov"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.13"
-content-hash = "cbbdf32af89061fb241281f412cfed0cbdab2a94c4dae35e2a017702b005851f"
+content-hash = "9f90370dbc1d017d38699a0f3286857756fee6e18d31ed8ec26dc98051cf8be2"
