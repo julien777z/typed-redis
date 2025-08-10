@@ -12,7 +12,6 @@ class UserFixture(RedisModel):
 
     id: Annotated[int, PrimaryRedisKey]
     name: str
-    email: str
 
 
 @pytest.fixture(autouse=True)

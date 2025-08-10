@@ -1,4 +1,4 @@
-from typing import Final, Annotated
+from typing import Annotated
 
 import pytest
 from pydantic import ValidationError
@@ -6,13 +6,11 @@ from fakeredis import FakeAsyncRedis
 from tests.fixtures import UserFixture
 from typed_redis import PrimaryRedisKey, RedisModel, Store
 
-TEST_EMAIL: Final[str] = "john.doe@example.com"
-
 
 async def _create_user(user_class: type[UserFixture], idx: int, name: str) -> UserFixture:
     """Create a test user."""
 
-    new_user = user_class(id=idx, name=name, email=TEST_EMAIL)
+    new_user = user_class(id=idx, name=name)
 
     await new_user.create()
 
@@ -43,7 +41,7 @@ async def test_create_redis_model_async_call(
 ):
     """Test the Redis model will be created when the model is called asynchronously."""
 
-    new_user = user_class(id=2, name="John Smith", email=TEST_EMAIL)
+    new_user = user_class(id=2, name="John Smith")
 
     await new_user()
 
@@ -139,9 +137,8 @@ async def test_get_decodes_bytes_when_decode_responses_false():
     class Foo(Store(rbytes), RedisModel, model_name="foo"):
         id: Annotated[int, PrimaryRedisKey]
         name: str
-        email: str
 
-    original = Foo(id=10, name="Bytes Name", email=TEST_EMAIL)
+    original = Foo(id=10, name="Bytes Name")
     await original.create()
 
     loaded = await Foo.get(10)
@@ -149,7 +146,6 @@ async def test_get_decodes_bytes_when_decode_responses_false():
     assert isinstance(loaded, Foo)
     assert loaded.id == 10
     assert loaded.name == "Bytes Name"
-    assert loaded.email == TEST_EMAIL
 
 
 @pytest.mark.asyncio
@@ -158,7 +154,7 @@ async def test_create_with_expiry_sets_ttl(
 ):
     """Passing ex to create should set a TTL on the key."""
 
-    user = user_class(id=3, name="TTL", email=TEST_EMAIL)
+    user = user_class(id=3, name="TTL")
     await user.create(ex=60)
 
     ttl = await redis_mock.ttl(user._redis_key)
