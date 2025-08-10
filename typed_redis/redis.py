@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import ClassVar, Generic, Self, TypedDict, TypeVar
+from typing import Any, ClassVar, Generic, Optional, Self, TypedDict, TypeVar
 
 from redis.asyncio import Redis
 from super_model import SuperModel
@@ -26,7 +26,20 @@ PrimaryRedisKey = _PrimaryRedisKeyAnnotation()
 T = TypeVar("T")
 
 
-class RedisModel(SuperModel, ABC, Generic[T]):
+class ModelWithParameter:
+    """Model with a parameter."""
+
+    model_name: str
+
+    def __init_subclass__(cls, model_name: str | None = None, **kwargs: Any) -> None:
+        """Initialize the subclass."""
+
+        cls.model_name = model_name
+
+        super().__init_subclass__(**kwargs)
+
+
+class RedisModel(SuperModel, ABC, ModelWithParameter, Generic[T]):
     """Base class for Redis-backed Pydantic models."""
 
     # Class-level Redis client. Set by the `Store` factory on the base class.
@@ -34,6 +47,9 @@ class RedisModel(SuperModel, ABC, Generic[T]):
 
     # Whether the model has been deleted. No further operations are allowed if this is True.
     _deleted: bool = False
+
+    # The name of the model. Passed by using the `model_name` Class argument.
+    model_name: ClassVar[str | None] = None
 
     def _assert_not_deleted(self) -> None:
         """Assert that the model has not been deleted."""
@@ -70,7 +86,7 @@ class RedisModel(SuperModel, ABC, Generic[T]):
     def _build_redis_key(cls, primary_key: T) -> str:
         """Build a Redis key from a primary key value."""
 
-        return f"{cls.__name__.lower()}:{primary_key}"
+        return f"{cls.model_name}:{primary_key}"
 
     @property
     def _redis_key(self) -> str:
