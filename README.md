@@ -114,4 +114,4 @@ print(user.name)
 Notes
 - Annotate exactly one field with `PrimaryRedisKey`.
 - Bind a Redis client via `Store(redis_client)` and inherit from it; otherwise, operations raise a `RuntimeError`.
-- Set the model name using a class keyword, e.g., `class User(Store, model_name="user"):`. This determines the Redis key prefix.
+- Set the model name using the `model_name` class argument, e.g., `class User(Store, model_name="user"):`. This determines the Redis key prefix.
