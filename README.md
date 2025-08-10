@@ -104,13 +104,13 @@ print(user.name)
 
 ### Supported Operations
 
-| Operation | Method | Example | Underlying Redis | Notes |
-| --- | --- | --- | --- | --- |
-| Create | `await instance.create(**kwargs)` | `await user.create(ex=60)` | `SET key value [EX seconds] [PX milliseconds] [NX]` | Serializes with `model_dump_json()` and stores at `redis_key`. Optional `ex`, `px`, `nx` are forwarded. |
-| Upsert (call) | `await instance()` | `await user()` | `SET key value` | Same as `create()` with default options. |
-| Update | `await instance.update(**changes)` | `await user.update(name="Charlie Brown")` | `SET key value` | Validates via Pydantic `model_copy(update=...)`, then persists. Returns the updated model. |
-| Get | `await Model.get(primary_key)` | `user = await User.get(1)` | `GET key` | Key is derived as `<model>:<pk>`. Parses JSON using `model_validate_json(...)`. |
-| Delete | `await instance.delete()` | `await user.delete()` | `DEL key` | Removes the key at `redis_key`. |
+| Operation | Method | Example | Notes |
+| --- | --- | --- | --- |
+| Create | `await instance.create(**kwargs)` | `await user.create(ex=60)` | Serializes with `model_dump_json()` and stores at `redis_key`. Optional `ex`, `px`, `nx` are forwarded. |
+| Upsert (call) | `await instance()` | `await user()` | Same as `create()` with default options. |
+| Update | `await instance.update(**changes)` | `await user.update(name="Charlie Brown")` | Validates via Pydantic `model_copy(update=...)`, then persists. Returns the updated model. |
+| Get | `await Model.get(primary_key)` | `user = await User.get(1)` | Key is derived as `<model>:<pk>`. Parses JSON using `model_validate_json(...)`. |
+| Delete | `await instance.delete()` | `await user.delete()` | Removes the key at `redis_key`. |
 
 Notes
 - Annotate exactly one field with `PrimaryRedisKey`.

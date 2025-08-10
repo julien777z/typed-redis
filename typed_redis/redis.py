@@ -107,6 +107,8 @@ class RedisModel(SuperModel, ABC, Generic[T]):
     async def update(self, **changes: dict) -> None:
         """Validate and persist updates into Redis."""
 
+        self.model_validate({**self.model_dump(), **changes})
+
         for key, value in changes.items():
             setattr(self, key, value)
 
