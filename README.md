@@ -21,8 +21,8 @@ pip install typed_redis
 ## Example
 
 ```python
-
-from typed_redis import Store
+from typing import Annotated
+from typed_redis import Store, PrimaryRedisKey
 from redis.asyncio import Redis
 
 redis = Redis(...)
@@ -30,21 +30,17 @@ redis = Redis(...)
 class User(Store(redis)):
     """User model."""
 
-    id: int
+    id: Annotated[int, PrimaryRedisKey]
     name: str
-
-    @property
-    def redis_key(self) -> str:
-        return f"user:{self.id}"
 
 
 user = User(id=1, name="Charlie")
 
-await user.create() # Store user object in Redis
+await user.create()  # Store user object in Redis
 
 # Later:
-user = await User.get("user:1")
-print(user.name) # "Charlie"
+user = await User.get(1)  # Look up by primary key value
+print(user.name)  # "Charlie"
 ```
 
 ## Documentation
@@ -69,7 +65,7 @@ Store = _Store(redis)
 ### Create Model
 
 Using your `Store` object created earlier, pass it into your Pydantic classes by inheritting from it.
-Add a `redis_key` property to return the string that should be used as the Redis key.
+Annotate one field as the primary key using `PrimaryRedisKey`. The Redis key is derived as `<model_name>:<primary_key_value>`.
 
 `user.py`
 ```python
@@ -79,12 +75,8 @@ from .store import Store
 class User(Store):
     """User model."""
 
-    id: int
+    id: Annotated[int, PrimaryRedisKey]
     name: str
-
-    @property
-    def redis_key(self) -> str:
-        return f"user:{self.id}"
 ```
 
 ### Use Your Model
@@ -95,8 +87,8 @@ Now you can use your model:
 
 from .user import User
 
-# Get existing user
-user = await User.get("user:1")
+# Get existing user by primary key value
+user = await User.get(1)
 print(user.name)
 
 # Create new user (idempotent)
@@ -117,9 +109,9 @@ print(user.name)
 | Create | `await instance.create(**kwargs)` | `await user.create(ex=60)` | `SET key value [EX seconds] [PX milliseconds] [NX]` | Serializes with `model_dump_json()` and stores at `redis_key`. Optional `ex`, `px`, `nx` are forwarded. |
 | Upsert (call) | `await instance()` | `await user()` | `SET key value` | Same as `create()` with default options. |
 | Update | `await instance.update(**changes)` | `await user.update(name="Charlie Brown")` | `SET key value` | Validates via Pydantic `model_copy(update=...)`, then persists. Returns the updated model. |
-| Get | `await Model.get(key)` | `user = await User.get("user:1")` | `GET key` | Parses JSON using `model_validate_json(...)` into your model. |
+| Get | `await Model.get(primary_key)` | `user = await User.get(1)` | `GET key` | Key is derived as `<model>:<pk>`. Parses JSON using `model_validate_json(...)`. |
 | Delete | `await instance.delete()` | `await user.delete()` | `DEL key` | Removes the key at `redis_key`. |
 
 Notes
-- Your model must implement a `redis_key` property returning the key string.
+- Annotate exactly one field with `PrimaryRedisKey`.
 - Bind a Redis client via `Store(redis_client)` and inherit from it; otherwise, operations raise a `RuntimeError`.

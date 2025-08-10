@@ -22,9 +22,9 @@ async def _assert_valid_user(user: UserFixture, redis_mock: FakeAsyncRedis):
     """Assert the user is valid."""
 
     assert user._client == redis_mock
-    assert user.redis_key == f"user:{user.id}"
+    assert user._redis_key == f"user:{user.id}"
 
-    assert await redis_mock.get(user.redis_key) == user.model_dump_json()
+    assert await redis_mock.get(user._redis_key) == user.model_dump_json()
 
 
 @pytest.mark.asyncio
@@ -63,9 +63,12 @@ async def test_redis_model_deleted(user_class: type[UserFixture]):
 
     await _create_user(user_class, idx=1, name="John Doe")
 
-    user = await user_class.get("user:1")
+    user = await user_class.get(1)
 
     await user.delete()
 
     with pytest.raises(RuntimeError):
         await user.update(name="Jane Doe")
+
+    with pytest.raises(RuntimeError):
+        await user.delete()

@@ -486,6 +486,25 @@ files = [
 typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
+name = "pydantic-super-model"
+version = "0.0.3"
+description = "Pydantic BaseModel supercharged with helper methods for generic and annotation support"
+optional = false
+python-versions = "<3.14,>=3.10"
+groups = ["main"]
+files = [
+    {file = "pydantic_super_model-0.0.3-py3-none-any.whl", hash = "sha256:1cd9b84caa10b546cda208746dd0d28659a67e81dfc8365c54226a0d16e4d6d5"},
+    {file = "pydantic_super_model-0.0.3.tar.gz", hash = "sha256:ed96b1215353a18c5e07dc9aa5b1ef4e763e70183b983bc0f38157d6a74992da"},
+]
+
+[package.dependencies]
+pydantic = ">=2.11.7,<3.0.0"
+python-generics = ">=0.2.3,<0.3.0"
+
+[package.extras]
+dev = ["black (>=24.0)", "coverage (>=7.6)", "pytest (>=8.0)", "pytest-asyncio (>=0.23)", "pytest-cov (>=6.1.1,<7.0.0)"]
+
+[[package]]
 name = "pygments"
 version = "2.19.2"
 description = "Pygments is a syntax highlighting package written in Python."
@@ -567,6 +586,27 @@ pytest = ">=6.2.5"
 
 [package.extras]
 testing = ["fields", "hunter", "process-tests", "pytest-xdist", "virtualenv"]
+
+[[package]]
+name = "python-generics"
+version = "0.2.3"
+description = "A package to determine the values of generic classes through instances or subclasses"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "python_generics-0.2.3-py3-none-any.whl", hash = "sha256:7dd0bdcd33eb874954eb580562bd6f2adb7f4c1d79d644a010efe59bb3fe186f"},
+    {file = "python_generics-0.2.3.tar.gz", hash = "sha256:33c9c48c5d86df3bfc4a319e27cb7bcf3fdce1d28d89bdd3f7a15fe02d31a01e"},
+]
+
+[package.extras]
+coverage = ["coverage (==7.6.1)"]
+formatting = ["black (==24.8.0)", "isort (==5.13.2)"]
+linting = ["pylint (==3.3.1)"]
+spellcheck = ["codespell (==2.3.0)"]
+test-packaging = ["build (==1.2.2.post1)", "twine (==5.1.1)"]
+tests = ["pydantic (==2.9.2)", "pytest (==8.3.3)"]
+type-check = ["mypy (==1.11.2)"]
 
 [[package]]
 name = "redis"
@@ -676,4 +716,4 @@ dev = ["black", "coverage", "pytest", "pytest-asyncio", "pytest-cov"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.13"
-content-hash = "a8c227bcfde7a72d5c517ca4121686e6c468b451b131f33b712ef049cd62fcca"
+content-hash = "371cae12e7a9ac67cf269ffcf0fb60789120776bb4a04d842a65cf7d9d824318"
