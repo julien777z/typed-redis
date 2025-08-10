@@ -3,7 +3,7 @@ from fakeredis import FakeAsyncRedis
 from tests.fixtures import *
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="function")
 async def redis_mock() -> FakeAsyncRedis:
     """Create a mock Redis client."""
 

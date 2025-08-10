@@ -12,7 +12,8 @@ homepage = "https://github.com/krystal-compute/typed-redis"
 dependencies = [
     "redis (>=6.4.0,<7.0.0)",
     "pydantic (>=2.11.7,<3.0.0)",
-    "fakeredis (>=2.30.3,<3.0.0)"
+    "fakeredis (>=2.30.3,<3.0.0)",
+    "pydantic-super-model (>=1.0.0,<2.0.0)"
 ]
 
 [project.optional-dependencies]
@@ -37,6 +38,11 @@ asyncio_mode = "auto"
 [tool.black]
 line-length = 100
 target-version = ["py310"]
+
+[tool.pylint]
+disable = [
+  "protected-access",
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
