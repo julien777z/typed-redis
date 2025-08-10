@@ -65,7 +65,7 @@ Store = _Store(redis)
 ### Create Model
 
 Using your `Store` object created earlier, pass it into your Pydantic classes by inheritting from it.
-Annotate one field as the primary key using `PrimaryRedisKey`. The Redis key is derived as `<model_name>:<primary_key_value>`.
+Annotate one field as the primary key using `PrimaryRedisKey`. The Redis key is derived using the model name and field value.
 
 `user.py`
 ```python
@@ -106,11 +106,10 @@ print(user.name)
 
 | Operation | Method | Example | Notes |
 | --- | --- | --- | --- |
-| Create | `await instance.create(**kwargs)` | `await user.create(ex=60)` | Serializes with `model_dump_json()` and stores at `redis_key`. Optional `ex`, `px`, `nx` are forwarded. |
-| Upsert (call) | `await instance()` | `await user()` | Same as `create()` with default options. |
-| Update | `await instance.update(**changes)` | `await user.update(name="Charlie Brown")` | Validates via Pydantic `model_copy(update=...)`, then persists. Returns the updated model. |
-| Get | `await Model.get(primary_key)` | `user = await User.get(1)` | Key is derived as `<model>:<pk>`. Parses JSON using `model_validate_json(...)`. |
-| Delete | `await instance.delete()` | `await user.delete()` | Removes the key at `redis_key`. |
+| Create | `await instance.create(**kwargs)` or `await instance(**kwargs)` | `await user.create(ex=60)` or `await user(ex=60) | Serializes with `model_dump_json()` and store in Redis. Optional kwarg are passed to Redis. |
+| Update | `await instance.update(**changes)` | `await user.update(name="Charlie Brown")` | Validates via Pydantic then persists to Redis. |
+| Get | `await Model.get(primary_key)` | `user = await User.get(1)` | Key is derived as `<model>:<pk>`. Parses JSON using `model_validate_json(...)` and returns the model. |
+| Delete | `await instance.delete()` | `await user.delete()` | Removes the model from Redis. No further operations are allowed after this is called. |
 
 Notes
 - Annotate exactly one field with `PrimaryRedisKey`.
