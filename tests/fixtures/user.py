@@ -1,7 +1,7 @@
 from typing import Annotated
 import pytest
 from fakeredis import FakeAsyncRedis
-from typed_redis import PrimaryRedisKey, RedisModel, Store
+from typed_redis import RedisPrimaryKey, RedisModel, Store
 
 
 __all__ = ["user_class", "UserFixture"]
@@ -10,7 +10,7 @@ __all__ = ["user_class", "UserFixture"]
 class UserFixture(RedisModel):
     """User fixture."""
 
-    id: Annotated[int, PrimaryRedisKey]
+    id: Annotated[int, RedisPrimaryKey]
     name: str
 
 

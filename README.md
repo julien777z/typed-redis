@@ -23,7 +23,7 @@ pip install typed_redis
 
 ```python
 from typing import Annotated
-from typed_redis import Store, PrimaryRedisKey
+from typed_redis import Store, RedisPrimaryKey
 from redis.asyncio import Redis
 
 redis = Redis(...)
@@ -31,7 +31,7 @@ redis = Redis(...)
 class User(Store(redis), model_name="user"):
     """User model."""
 
-    id: Annotated[int, PrimaryRedisKey]
+    id: Annotated[int, RedisPrimaryKey]
     name: str
 
 
@@ -66,7 +66,7 @@ Store = _Store(redis)
 ### Create Model
 
 Using your `Store` object created earlier, inherit from it and set a `model_name` class argument to prefix your Redis keys for this model.
-Annotate one field as the primary key using `PrimaryRedisKey`. This field value will be used as the value for the Redis key. 
+Annotate one field as the primary key using `RedisPrimaryKey`. This field value will be used as the value for the Redis key.
 
 > Note: The Redis key is derived using the model name and field value.
 
@@ -78,7 +78,7 @@ from .store import Store
 class User(Store, model_name="user"):
     """User model."""
 
-    id: Annotated[int, PrimaryRedisKey]
+    id: Annotated[int, RedisPrimaryKey]
     name: str
 ```
 
@@ -111,6 +111,6 @@ await new_user.update(name="Bob Smith")
 | Delete | `await instance.delete()` | `await user.delete()` | Removes the model from Redis. No further operations are allowed after this is called. |
 
 Notes
-- Annotate exactly one field with `PrimaryRedisKey`.
+- Annotate exactly one field with `RedisPrimaryKey`.
 - Bind a Redis client via `Store(redis_client)` and inherit from it; otherwise, operations raise a `RuntimeError`.
 - Set the model name using the `model_name` class argument, e.g., `class User(Store, model_name="user"):`. This determines the Redis key prefix.

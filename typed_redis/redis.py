@@ -6,7 +6,7 @@ from typing import Any, ClassVar, Generic, TypedDict, TypeVar
 from redis.asyncio import Redis
 from super_model import SuperModel
 
-__all__ = ["PrimaryRedisKey", "RedisModel"]
+__all__ = ["RedisPrimaryKey", "RedisModel"]
 
 
 class RedisKwargs(TypedDict, total=False):
@@ -17,11 +17,11 @@ class RedisKwargs(TypedDict, total=False):
     nx: bool
 
 
-class _PrimaryRedisKeyAnnotation:  # pylint: disable=too-few-public-methods
+class _RedisPrimaryKeyAnnotation:  # pylint: disable=too-few-public-methods
     """Annotation for the primary key of the model."""
 
 
-PrimaryRedisKey = _PrimaryRedisKeyAnnotation()
+RedisPrimaryKey = _RedisPrimaryKeyAnnotation()
 
 T = TypeVar("T")
 
@@ -72,7 +72,7 @@ class RedisModel(SuperModel, ABC, ModelWithParameter, Generic[T]):
     def _primary_key_field_name(self) -> str:
         """Return the field name annotated as the primary key."""
 
-        primary_key_fields = self.get_annotated_fields(PrimaryRedisKey)
+        primary_key_fields = self.get_annotated_fields(RedisPrimaryKey)
 
         if len(primary_key_fields) > 1:
             raise ValueError("Only one primary key is allowed.")

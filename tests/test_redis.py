@@ -4,7 +4,7 @@ import pytest
 from pydantic import ValidationError
 from fakeredis import FakeAsyncRedis
 from tests.fixtures import UserFixture
-from typed_redis import PrimaryRedisKey, RedisModel, Store
+from typed_redis import RedisPrimaryKey, RedisModel, Store
 
 
 async def _create_user(user_class: type[UserFixture], idx: int, name: str) -> UserFixture:
@@ -139,7 +139,7 @@ class TestModelUnbound:
         """Unbound client access and ops should raise RuntimeError."""
 
         class Unbound(RedisModel, model_name="unbound"):
-            id: Annotated[int, PrimaryRedisKey]
+            id: Annotated[int, RedisPrimaryKey]
 
         # Synchronous property access must raise
         obj = Unbound(id=1)
@@ -184,8 +184,8 @@ class TestModelPrimaryKeyAnnotations:
         """Model with multiple primary keys should raise ValueError when key is computed."""
 
         class MultiPk(Store(redis_mock), RedisModel, model_name="mpk"):
-            id: Annotated[int, PrimaryRedisKey]
-            other: Annotated[int, PrimaryRedisKey]
+            id: Annotated[int, RedisPrimaryKey]
+            other: Annotated[int, RedisPrimaryKey]
 
         obj = MultiPk(id=1, other=2)
 
@@ -203,7 +203,7 @@ class TestModelDecoding:
         rbytes = FakeAsyncRedis(decode_responses=False)
 
         class Foo(Store(rbytes), RedisModel, model_name="foo"):
-            id: Annotated[int, PrimaryRedisKey]
+            id: Annotated[int, RedisPrimaryKey]
             name: str
 
         original = Foo(id=10, name="Bytes Name")
