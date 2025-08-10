@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, ClassVar, Generic, Optional, Self, TypedDict, TypeVar
+from typing import Any, ClassVar, Generic, TypedDict, TypeVar
 
 from redis.asyncio import Redis
 from super_model import SuperModel
@@ -138,7 +138,7 @@ class RedisModel(SuperModel, ABC, ModelWithParameter, Generic[T]):
         self._deleted = True
 
     @classmethod
-    async def get(cls, primary_key: T) -> Self:
+    async def get(cls, primary_key: T) -> RedisModel[T]:
         """Get the model from Redis and parse it into the Pydantic model."""
 
         cls._assert_redis_client()
