@@ -75,38 +75,36 @@ async def test_redis_model_deleted(user_class: type[UserFixture]):
         await user.delete()
 
 
-def test_unbound_model_raises_on_ops():
-    """Using a model without binding a Redis client should raise errors."""
+@pytest.mark.asyncio
+async def test_unbound_model_ops_raise_runtime_error():
+    """Unbound client access and ops should raise RuntimeError."""
 
     class Unbound(RedisModel, model_name="unbound"):
         id: Annotated[int, PrimaryRedisKey]
 
+    # Synchronous property access must raise
     obj = Unbound(id=1)
-    # Accessing the client synchronously must raise because no client is bound
+
     with pytest.raises(RuntimeError):
         _ = obj._client
 
+    # Async operations should also raise
+    operations: list[tuple[str, bool]] = [
+        ("create", False),  # instance method
+        ("get", True),  # class method
+    ]
 
-@pytest.mark.asyncio
-async def test_unbound_model_create_raises_runtime_error():
-    """Creating an instance without a bound client raises RuntimeError."""
+    for method_name, is_classmethod in operations:
+        with pytest.raises(RuntimeError):
+            if is_classmethod:
+                method = getattr(Unbound, method_name)
 
-    class Unbound(RedisModel, model_name="unbound"):
-        id: Annotated[int, PrimaryRedisKey]
+                await method(1)
+            else:
+                instance = Unbound(id=1)
+                method = getattr(instance, method_name)
 
-    with pytest.raises(RuntimeError):
-        await Unbound(id=1).create()
-
-
-@pytest.mark.asyncio
-async def test_unbound_model_get_raises_runtime_error():
-    """Class get without a bound client raises RuntimeError."""
-
-    class Unbound(RedisModel, model_name="unbound"):
-        id: Annotated[int, PrimaryRedisKey]
-
-    with pytest.raises(RuntimeError):
-        await Unbound.get(1)
+                await method()
 
 
 def test_missing_primary_key_annotation_raises(redis_mock: FakeAsyncRedis):
@@ -147,6 +145,7 @@ async def test_get_decodes_bytes_when_decode_responses_false():
     await original.create()
 
     loaded = await Foo.get(10)
+
     assert isinstance(loaded, Foo)
     assert loaded.id == 10
     assert loaded.name == "Bytes Name"
@@ -196,5 +195,6 @@ async def test_delete_sets_deleted_flag(user_class: type[UserFixture]):
     """Delete should mark the instance as deleted."""
 
     user = await _create_user(user_class, idx=5, name="ToDelete")
+
     await user.delete()
     assert user._deleted is True
