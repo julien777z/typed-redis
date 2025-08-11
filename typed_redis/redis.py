@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Any, ClassVar, Generic, TypedDict, TypeVar
+from typing import ClassVar, Generic, TypedDict, TypeVar
 
 from redis.asyncio import Redis
 from super_model import SuperModel
+from typed_redis.misc import ClassWithParameter
 
 __all__ = ["RedisPrimaryKey", "RedisModel"]
 
@@ -26,20 +27,7 @@ RedisPrimaryKey = _RedisPrimaryKeyAnnotation()
 T = TypeVar("T")
 
 
-class _ClassWithParameter:
-    """Adds a parameter to the class."""
-
-    model_name: str
-
-    def __init_subclass__(cls, model_name: str | None = None, **kwargs: Any) -> None:
-        """Initialize the subclass."""
-
-        cls.model_name = model_name
-
-        super().__init_subclass__(**kwargs)
-
-
-class RedisModel(SuperModel, _ClassWithParameter, ABC, Generic[T]):
+class RedisModel(SuperModel, ClassWithParameter, ABC, Generic[T]):
     """Base class for Redis-backed Pydantic models."""
 
     # Class-level Redis client. Set by the `Store` factory on the base class.
