@@ -1,6 +1,6 @@
 # Pydantic Models for Redis
 
-[![Coverage](https://img.shields.io/codecov/c/github/julien777z/pydantic-super-model?branch=main&label=Coverage)](https://codecov.io/gh/julien777z/pydantic-super-model)
+[![Coverage](https://img.shields.io/codecov/c/github/julien777z/typed-redis?branch=main&label=Coverage)](https://codecov.io/gh/julien777z/pydantic-super-model)
 
 Typed Redis provides strongly typed, Pydantic-based models for Redis with built-in validation and serialization.
 
