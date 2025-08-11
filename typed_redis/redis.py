@@ -26,8 +26,8 @@ RedisPrimaryKey = _RedisPrimaryKeyAnnotation()
 T = TypeVar("T")
 
 
-class ModelWithParameter:
-    """Model with a parameter."""
+class _ClassWithParameter:
+    """Adds a parameter to the class."""
 
     model_name: str
 
@@ -39,7 +39,7 @@ class ModelWithParameter:
         super().__init_subclass__(**kwargs)
 
 
-class RedisModel(SuperModel, ABC, ModelWithParameter, Generic[T]):
+class RedisModel(SuperModel, _ClassWithParameter, ABC, Generic[T]):
     """Base class for Redis-backed Pydantic models."""
 
     # Class-level Redis client. Set by the `Store` factory on the base class.
@@ -108,7 +108,7 @@ class RedisModel(SuperModel, ABC, ModelWithParameter, Generic[T]):
 
         return client
 
-    async def _store_to_redis(self, **kwargs: RedisKwargs) -> None:
+    async def _store_model_in_redis(self, **kwargs: RedisKwargs) -> None:
         """Store the model to Redis."""
 
         data = self.model_dump_json()
@@ -118,7 +118,7 @@ class RedisModel(SuperModel, ABC, ModelWithParameter, Generic[T]):
     async def create(self, **kwargs: RedisKwargs) -> None:
         """Create the model in Redis. This is idempotent."""
 
-        await self._store_to_redis(**kwargs)
+        await self._store_model_in_redis(**kwargs)
 
     async def update(self, **changes: dict) -> None:
         """Validate and persist updates into Redis."""
@@ -128,7 +128,7 @@ class RedisModel(SuperModel, ABC, ModelWithParameter, Generic[T]):
         for key, value in changes.items():
             setattr(self, key, value)
 
-        await self._store_to_redis()
+        await self._store_model_in_redis()
 
     async def delete(self) -> None:
         """Delete the model from Redis. No further operations are allowed after this is called."""
@@ -152,7 +152,7 @@ class RedisModel(SuperModel, ABC, ModelWithParameter, Generic[T]):
 
         return cls.model_validate_json(data)
 
-    async def __call__(self) -> None:
+    async def __call__(self, **kwargs: RedisKwargs) -> None:
         """Initialize the model."""
 
-        await self.create()
+        await self.create(**kwargs)
