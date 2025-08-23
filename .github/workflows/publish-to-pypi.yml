@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/pydantic-super-model/
+      url: https://pypi.org/project/typed-redis/
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
