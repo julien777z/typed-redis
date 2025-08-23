@@ -43,22 +43,27 @@ jobs:
           newv=$(poetry version --short)
           echo "current=$current" >> "$GITHUB_OUTPUT"
           echo "new=$newv" >> "$GITHUB_OUTPUT"
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git commit -am "chore(release): bump version to $newv"
-          git tag "$newv"
-
-      - name: Push changes and tags
-        shell: bash
-        run: |
-          git push origin HEAD
-          git push origin --tags
 
       - name: Build package
         run: poetry build
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Commit version bump and tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git commit -am "chore(release): bump version to ${{ steps.bump.outputs.new }}"
+          git tag "${{ steps.bump.outputs.new }}"
+
+      - name: Push changes and tags
+        shell: bash
+        run: |
+          git push origin HEAD
+          git push origin --tags
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
