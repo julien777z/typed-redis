@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import ClassVar, Generic, TypedDict, TypeVar
+from typing import ClassVar, Generic, TypedDict, TypeVar, cast
 
 from redis.asyncio import Redis
 from super_model import SuperModel
@@ -25,6 +25,7 @@ class _RedisPrimaryKeyAnnotation:  # pylint: disable=too-few-public-methods
 RedisPrimaryKey = _RedisPrimaryKeyAnnotation()
 
 T = TypeVar("T")
+M = TypeVar("M", bound="RedisModel")
 
 
 class RedisModel(SuperModel, ClassWithParameter, ABC, Generic[T]):
@@ -126,7 +127,7 @@ class RedisModel(SuperModel, ClassWithParameter, ABC, Generic[T]):
         self._deleted = True
 
     @classmethod
-    async def get(cls, primary_key: T) -> RedisModel[T]:
+    async def get(cls: type[M], primary_key: T) -> M:
         """Get the model from Redis and parse it into the Pydantic model."""
 
         cls._assert_redis_client()
@@ -138,7 +139,7 @@ class RedisModel(SuperModel, ClassWithParameter, ABC, Generic[T]):
         if isinstance(data, bytes):
             data = data.decode("utf-8")
 
-        return cls.model_validate_json(data)
+        return cast(M, cls.model_validate_json(data))
 
     async def __call__(self, **kwargs: RedisKwargs) -> None:
         """Initialize the model."""
