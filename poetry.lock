@@ -732,5 +732,5 @@ dev = ["black", "coverage", "isort", "pylint", "pytest", "pytest-asyncio", "pyte
 
 [metadata]
 lock-version = "2.1"
-python-versions = "<3.14,>=3.11.0"
-content-hash = "9c6379e7b0a786affeba2f673b23d0a963c03b5abaf7a8a2638c10f35f89e52a"
+python-versions = ">=3.11.0,<3.13"
+content-hash = "0572bb6bfe71d9a6e703f248964bded0593b0e55cad3fcfa44a1fae9ae63132e"
