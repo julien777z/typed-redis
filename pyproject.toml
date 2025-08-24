@@ -7,28 +7,32 @@ authors = [
 ]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.11.0,<3.13"
 homepage = "https://github.com/julien777z/typed-redis"
 dependencies = [
     "redis (>=6.4.0,<7.0.0)",
     "pydantic (>=2.11.7,<3.0.0)",
     "fakeredis (>=2.30.3,<3.0.0)",
-    "pydantic-super-model (>=1.0.0,<2.0.0)"
+    "pydantic-super-model (>=1.0.3,<2.0.0)"
+]
+packages = [
+    {include = "typed_redis"},
+    {include = "scripts"}
 ]
 
 [project.optional-dependencies]
 dev = [
-  "pytest>=8.0",
-  "pytest-asyncio>=0.23",
-  "black>=24.0",
-  "coverage>=7.6",
-  "pytest-cov (>=6.1.1,<7.0.0)"
+    "pytest (>=8.0,<9.0)",
+    "pytest-asyncio (>=0.23,<0.24)",
+    "coverage (>=7.6,<8.0)",
+    "pytest-cov (>=6.1.1,<7.0.0)",
+    "black (>=24.3.0,<25.0.0)",
+    "isort (>=5.12.0,<6.0.0)",
+    "pylint (>=3.0.1,<4.0.0)",
 ]
 
-[tool.poetry]
-packages = [
-    {include = "typed_redis"}
-]
+[project.scripts]
+tests = "scripts.run_tests:main"
 
 [tool.pytest.ini_options]
 addopts = "-q"
@@ -36,8 +40,12 @@ testpaths = ["tests"]
 asyncio_mode = "auto"
 
 [tool.black]
-line-length = 100
-target-version = ["py310"]
+line-length = 110
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 110
 
 [tool.pylint]
 disable = [

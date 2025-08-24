@@ -4,7 +4,7 @@ from abc import ABC
 from typing import ClassVar, Generic, TypedDict, TypeVar, cast
 
 from redis.asyncio import Redis
-from super_model import SuperModel
+from pydantic_super_model import SuperModel
 from typed_redis.misc import ClassWithParameter
 
 __all__ = ["RedisPrimaryKey", "RedisModel"]
