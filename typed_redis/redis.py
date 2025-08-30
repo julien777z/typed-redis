@@ -10,7 +10,7 @@ from typed_redis.misc import ClassWithParameter
 __all__ = ["RedisPrimaryKey", "RedisModel"]
 
 
-PRIMARY_KEY_TEMPLATE: Final[str] = "{model_name}:{primary_key_value}"
+REDIS_KEY_TEMPLATE: Final[str] = "{model_name}:{primary_key_value}"
 
 
 class RedisKwargs(TypedDict, total=False):
@@ -78,7 +78,7 @@ class RedisModel(SuperModel, ClassWithParameter, ABC, Generic[T]):
     def _build_redis_key(cls, primary_key: T) -> str:
         """Build a Redis key from a primary key value."""
 
-        return PRIMARY_KEY_TEMPLATE.format(model_name=cls.model_name, primary_key_value=primary_key)
+        return REDIS_KEY_TEMPLATE.format(model_name=cls.model_name, primary_key_value=primary_key)
 
     @property
     def _redis_key(self) -> str:
@@ -87,7 +87,7 @@ class RedisModel(SuperModel, ClassWithParameter, ABC, Generic[T]):
         field_name = self._primary_key_field_name
         pk_value: T = getattr(self, field_name)
 
-        return PRIMARY_KEY_TEMPLATE.format(model_name=self.model_name, primary_key_value=pk_value)
+        return REDIS_KEY_TEMPLATE.format(model_name=self.model_name, primary_key_value=pk_value)
 
     @property
     def _client(self) -> Redis:
