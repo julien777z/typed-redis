@@ -108,7 +108,7 @@ await new_user.update(name="Bob Smith")
 | --- | --- | --- | --- |
 | Create | `await instance.create(**kwargs)` or `await instance(**kwargs)` | `await user.create(ex=60)` or `await user(ex=60)` | Serializes with `model_dump_json()` and stores in Redis. Optional kwargs are passed to Redis. |
 | Update | `await instance.update(**changes)` | `await user.update(name="Charlie Brown")` | Validates via Pydantic then persists to Redis. |
-| Get | `await Model.get(primary_key)` | `user = await User.get(1)` | Key is derived as `<model_name>:<pk>`. Parses JSON using `model_validate_json(...)` and returns the model. |
+| Get | `await Model.get(primary_key)` | `user = await User.get(1)` | Key is derived as `<model_name>:<pk>`. Parses JSON using `model_validate_json(...)` and returns the model if it exists; otherwise, `None` is returned. |
 | Delete | `await instance.delete()` | `await user.delete()` | Removes the model from Redis. No further operations are allowed after this is called. |
 
 Notes
