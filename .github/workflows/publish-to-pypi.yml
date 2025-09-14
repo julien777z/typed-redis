@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: |
           git push origin HEAD
-          git push origin --tags
+          git push origin "refs/tags/${{ steps.bump.outputs.new }}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
