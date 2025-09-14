@@ -36,9 +36,7 @@ class TestModelCreation:
         assert user_class._build_redis_key(42) == "user:42"
 
     @pytest.mark.asyncio
-    async def test_create_redis_model(
-        self, user_class: type[UserFixture], redis_mock: FakeAsyncRedis
-    ):
+    async def test_create_redis_model(self, user_class: type[UserFixture], redis_mock: FakeAsyncRedis):
         """Test the Redis model create method."""
 
         new_user = await _create_user(user_class, idx=1, name="John Doe")
@@ -99,6 +97,27 @@ class TestModelValidation:
         # invalid update
         with pytest.raises(ValidationError):
             await user.update(name=True)  # type: ignore[arg-type]
+
+
+class TestModelGet:
+    """Group get-related Redis model tests."""
+
+    @pytest.mark.asyncio
+    async def test_redis_model_get_none(self, user_class: type[UserFixture]):
+        """Get should return None if the model does not exist."""
+
+        assert await user_class.get(1) is None
+
+    @pytest.mark.asyncio
+    async def test_redis_model_get_valid(self, user_class: type[UserFixture], redis_mock: FakeAsyncRedis):
+        """Get should return a valid model."""
+
+        user = await _create_user(user_class, idx=4, name="Before")
+
+        assert await user_class.get(4) == user
+
+        # persisted model is the same as the one returned by get
+        assert await redis_mock.get(user._redis_key) == user.model_dump_json()
 
 
 class TestModelDeletion:

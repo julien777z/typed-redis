@@ -130,7 +130,7 @@ class RedisModel(SuperModel, ClassWithParameter, ABC, Generic[T]):
         self._deleted = True
 
     @classmethod
-    async def get(cls: type[M], primary_key: T) -> M:
+    async def get(cls: type[M], primary_key: T) -> M | None:
         """Get the model from Redis and parse it into the Pydantic model."""
 
         cls._assert_redis_client()
@@ -138,6 +138,9 @@ class RedisModel(SuperModel, ClassWithParameter, ABC, Generic[T]):
         client = cls._redis
 
         data = await client.get(cls._build_redis_key(primary_key))
+
+        if data is None:
+            return None
 
         if isinstance(data, bytes):
             data = data.decode("utf-8")
